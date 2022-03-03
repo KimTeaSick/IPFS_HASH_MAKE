@@ -1,0 +1,14 @@
+{
+  "name" : "cat",
+  "description" : "The world's most adorable and sensitive pup.",
+  "image" : "ipfs://QmaX85X7DcwqfqW2jDKfjMaGgiMGwhfCyXK5yWkpVyiBYw",
+  "attributes" : [
+  {
+    "trait_type" : "Breed",
+    "value" : "Maltipoo"
+  }, 
+  {
+    "trait_type" : "Eye color",
+    "value" : "Mocha"
+  } ]
+}

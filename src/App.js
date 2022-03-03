@@ -1,36 +1,61 @@
 import './App.css'
-import { useState } from 'react'
-import { create } from 'ipfs-http-client'
+import { useCallback, useState, useEffect } from 'react';
+import { create } from 'ipfs-http-client';
+import Web3 from 'web3/dist/web3.min.js';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import Main from './Page/Main';
+import MyPage from './Page/MyPage';
+import Layout from './Components/Layout';
 
 const client = create('https://ipfs.infura.io:5001/api/v0')
 
 function App() {
-  const [fileUrl, updateFileUrl] = useState(``)
-  async function onChange(e) {
-    const file = e.target.files[0]
-    try {
-      const added = await client.add(file)
-      const url = `https://ipfs.infura.io/ipfs/${added.path}`
-      updateFileUrl(url)
-    } catch (error) {
-      console.log('Error uploading file: ', error)
-    }  
-  }
-  return (
-    <div className="App">
-      <h1>IPFS Exchange</h1>
-      <input
-        type="file"
-        onChange={onChange}
-      />
-      {
-        fileUrl && (
-          <img src={fileUrl} width="600px" alt='이미지가 아닙니다.' />
-        )
+  const [web3, setWeb3] = useState();
+  const [account, setAccount] = useState('');
+
+  //web3 제작함수
+  useEffect(() => {
+    if (typeof window.ethereum !== "undefined") { // window.ethereum이 있다면
+      try {
+        const web = new Web3(window.ethereum);  // 새로운 web3 객체생성
+        setWeb3(web);
+      } catch (err) {
+        console.log(err);
       }
-      <h1>IPFS 해쉬</h1>
-      <p>{fileUrl}</p>
+    }
+  }, []);
+
+  //지갑 연결 함수
+  const connectWallet = async () => {
+    const accounts = await window.ethereum.request({
+      method: "eth_requestAccounts",
+    });
+
+    setAccount(accounts[0]);
+  };
+
+  return (
+    <div>
+      <div style={{ display: 'flex', alignContent: 'center', justifyContent: 'center' }}>
+        <button
+          className="metaConnect"
+          onClick={() => {
+            connectWallet();
+          }}
+        >
+          MetaMask 지갑 연결
+        </button>
+      </div>
+      <BrowserRouter>
+        <Layout>
+          <Routes>
+            <Route path="/" element={<Main />} />
+            <Route path="/mypage" element={<MyPage />} />
+          </Routes>
+        </Layout>
+      </BrowserRouter>
     </div>
+
   );
 }
 
